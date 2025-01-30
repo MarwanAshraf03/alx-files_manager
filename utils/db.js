@@ -1,27 +1,34 @@
-import MongoClient from 'mongodb/lib/mongo_client';
+import MongoClient from "mongodb/lib/mongo_client";
 
 class DBClient {
   constructor() {
-    const port = process.env.DB_PORT || '27017';
+    const port = process.env.DB_PORT || "27017";
     const host = process.env.HOST || `mongodb://localhost:${port}`;
-    const database = process.env.DB_DATABASE || 'files_manager';
+    const database = process.env.DB_DATABASE || "files_manager";
+    this.client = new MongoClient(host, { useUnifiedTopology: true });
     this.db = null;
-    MongoClient.connect(host, { useUnifiedTopology: true }, (err, client) => {
-      if (err) console.log(err);
-      this.db = client.db(database);
-    });
+    this.connectDB(database);
   }
-
+  async connectDB(database) {
+    try {
+      await this.client.connect();
+      this.db = this.client.db(database);
+      console.log("Connected to MongoDB");
+    } catch (err) {
+      console.error("MongoDB connection error:", err);
+    }
+  }
   isAlive() {
+    // return this.db !== null;
     return this.db !== null;
   }
 
   async nbUsers() {
-    return this.db.collection('users').countDocuments();
+    return this.db.collection("users").countDocuments();
   }
 
   async nbFiles() {
-    return this.db.collection('files').countDocuments();
+    return this.db.collection("files").countDocuments();
   }
 }
 

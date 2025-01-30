@@ -1,9 +1,9 @@
-import dbClient from '../utils/db';
-import redisClient from '../utils/redis';
+import dbClient from "../utils/db";
+import redisClient from "../utils/redis";
 
-export function status() {
-  return { redis: redisClient.isAlive, db: dbClient.isAlive };
+export function getStatus(req, res) {
+  res.json({ redis: redisClient.isAlive(), db: dbClient.isAlive() });
 }
-export function stats() {
-  return { users: dbClient.nbUsers, files: dbClient.nbFiles };
+export function getStats(req, res) {
+  res.json({ users: dbClient.nbUsers(), files: dbClient.nbFiles() });
 }
