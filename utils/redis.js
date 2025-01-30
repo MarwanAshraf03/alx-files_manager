@@ -1,11 +1,11 @@
-import redis from 'redis';
+import redis from "redis";
 
 class RedisClient {
   constructor() {
     this.client = redis.createClient();
-    this.client.on('error', (error) => {
+    this.client.on("error", (error) => {
       console.error(
-        `Redis client not connected to the server: ${error.message}`,
+        `Redis client not connected to the server: ${error.message}`
       );
     });
   }
@@ -15,7 +15,8 @@ class RedisClient {
   }
 
   async get(key) {
-    return this.client.get(key);
+    const gett = promisfy(this.client.get).bind(this.client);
+    return await gett(key);
   }
 
   async set(key, value, duration) {
