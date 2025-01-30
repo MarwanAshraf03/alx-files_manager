@@ -1,11 +1,11 @@
-import redis from "redis";
+import redis from 'redis';
 
 class RedisClient {
   constructor() {
     this.client = redis.createClient();
-    this.client.on("error", (error) => {
+    this.client.on('error', (error) => {
       console.error(
-        `Redis client not connected to the server: ${error.message}`
+        `Redis client not connected to the server: ${error.message}`,
       );
     });
   }
@@ -27,5 +27,5 @@ class RedisClient {
   }
 }
 
-var redisClient = new RedisClient();
+const redisClient = new RedisClient();
 export default redisClient;
