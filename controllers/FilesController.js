@@ -4,7 +4,8 @@ import dbClient from "../utils/db";
 import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
 import mime from "mime-types";
-import { Queue } from "bull";
+// import { Queue } from "bull";
+import Queue from "bull/lib/queue";
 
 const fileQueue = new Queue("fileQueue");
 
@@ -64,15 +65,18 @@ export async function postUpload(req, res) {
 
   const filename = uuidv4();
   const localPath = `${folderPath}/${filename}`;
-  const fileData = Buffer.from(data, "base64");
-  fs.writeFileSync(localPath, fileData);
+
+  await fs.promises.writeFile(localPath, Buffer.from(data, "base64"));
 
   fileDocument.localPath = localPath;
+  fileDocument.mimeType = mime.lookup(name);
+
   const result = await dbClient.db.collection("files").insertOne(fileDocument);
 
-  if (type === "image") {
-    fileQueue.add({ userId, fileId: result.insertedId });
-  }
+  fileQueue.add({
+    userId,
+    fileId: result.insertedId,
+  });
 
   return res.status(201).json({
     id: result.insertedId,
