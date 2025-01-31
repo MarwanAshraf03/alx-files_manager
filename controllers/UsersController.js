@@ -23,3 +23,21 @@ export async function postNew(req, res) {
 
   return res.json({ id: id, email: user.email });
 }
+
+export async function getMe(req, res) {
+  const token = req.header("X-Token");
+  if (!token) {
+    return res.status(401).send({ error: "Unauthorized" });
+  }
+  const userId = await redisClient.get(`auth_${token}`);
+  if (!userId) {
+    return res.status(401).send({ error: "Unauthorized" });
+  }
+  const user = await dbClient.db
+    .collection("users")
+    .findOne({ _id: ObjectId(userId) });
+  if (!user) {
+    return res.status(401).send({ error: "Unauthorized" });
+  }
+  return res.json({ id: user._id, email: user.email });
+}
