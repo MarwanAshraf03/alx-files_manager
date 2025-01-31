@@ -62,3 +62,5 @@ export async function postUpload(req, res) {
     ...fileDocument,
   });
 }
+export async function getShow(req, res) {}
+export async function getIndex(req, res) {}
