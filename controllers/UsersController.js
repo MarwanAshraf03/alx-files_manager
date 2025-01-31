@@ -21,5 +21,5 @@ export async function postNew(req, res) {
   //   dbClient.db.collection("users").insertOne(user);
   const id = dbClient.db.collection("users").findOne({ email: user.email })._id;
 
-  return res.json({ id, email: user.email });
+  return res.json({ id: id, email: user.email });
 }
